@@ -15,7 +15,6 @@ class Database {
         $dbPassword = $_ENV['DB_PASSWORD'];
 
         $this->pdo = new PDO("pgsql:host=$dbHost;port=$dbPort;dbname=$dbName;user=$dbUser;password=$dbPassword");
-        echo "PDO connection object created";
     }
 
     function test (): void {
