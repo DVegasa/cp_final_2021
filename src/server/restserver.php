@@ -11,6 +11,7 @@ use dvegasa\cpfinal\server\outmodels\OutArch;
 use dvegasa\cpfinal\server\outmodels\OutLP;
 use dvegasa\cpfinal\server\outmodels\OutOnboardingRoute;
 use dvegasa\cpfinal\server\outmodels\OutQuestionAnswerInput;
+use dvegasa\cpfinal\server\outmodels\OutQuestionMultiChoice;
 use dvegasa\cpfinal\server\outmodels\OutTest;
 use dvegasa\cpfinal\storage\database\Database;
 use dvegasa\cpfinal\storage\dbmodels\DbArch;
@@ -138,8 +139,25 @@ class RestServer {
                     $dbTest = $this->db->getTestById($testId);
                     $outQuestions = array();
                     foreach ($dbTest->questionIds as $questionId) {
-                        $dbQuestion = $questionId;
-                        $outQuestions[] = new OutQuestionAnswerInput();
+                        $dbQuestion = $this->db->getDbQuestionAnswerInputById($questionId);
+                        if ($dbQuestion) {
+                            $outQuestions[] = new OutQuestionAnswerInput(
+                                    id: $dbQuestion->id,
+                                    title: $dbQuestion->title,
+                                    description: $dbQuestion->description,
+                                    answers: $dbQuestion->answers,
+                                    reward: $dbQuestion->reward,
+                            );
+                        } else {
+                            $dbQuestion = $this->db->getDbQuestionMultiChoiceById($questionId);
+                            $outQuestions[] = new OutQuestionMultiChoice(
+                                    id: $dbQuestion->id,
+                                    title: $dbQuestion->title,
+                                    variants: $dbQuestion->variants,
+                                    corrects: $dbQuestion->corrects,
+                                    reward: $dbQuestion->reward,
+                            );
+                        }
                     }
                     $outTests[] = new OutTest(
                             id: $dbTest->id,

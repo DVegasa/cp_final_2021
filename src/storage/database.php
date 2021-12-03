@@ -6,6 +6,8 @@ use dvegasa\cpfinal\storage\dbmodels\DbAccount;
 use dvegasa\cpfinal\storage\dbmodels\DbArch;
 use dvegasa\cpfinal\storage\dbmodels\DbLP;
 use dvegasa\cpfinal\storage\dbmodels\DbOnboardingRoute;
+use dvegasa\cpfinal\storage\dbmodels\DbQuestionAnswerInput;
+use dvegasa\cpfinal\storage\dbmodels\DbQuestionMultiChoice;
 use dvegasa\cpfinal\storage\dbmodels\DbTest;
 use Exception;
 use PDO;
@@ -113,6 +115,34 @@ class Database {
                 id: $row['id'] ?? null,
                 title: $row['title'] ?? null,
                 questionIds: $row['questionIds'] ?? null,
+        );
+    }
+
+    function getDbQuestionAnswerInputById (string $id): DbQuestionAnswerInput|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "QuestionAnswerInput" WHERE "id" = ?');
+        $stmt->execute(array($id));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbQuestionAnswerInput(
+                id: $row['id'] ?? null,
+                title: $row['title'] ?? null,
+                description: $row['description'] ?? null,
+                answers: $row['answers'] ?? null,
+                reward: $row['reward'] ?? null,
+        );
+    }
+
+    function getDbQuestionMultiChoiceById (string $id): DbQuestionMultiChoice|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "QuestionMultiChoice" WHERE "id" = ?');
+        $stmt->execute(array($id));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbQuestionMultiChoice(
+                id: $row['id'] ?? null,
+                title: $row['title'] ?? null,
+                variants: $row['variants'] ?? null,
+                corrects: $row['corrects'] ?? null,
+                reward: $row['reward'] ?? null,
         );
     }
 
