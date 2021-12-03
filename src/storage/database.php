@@ -28,10 +28,6 @@ class Database {
         $this->pdo->exec('SET TIME ZONE ' . $this->pdo->quote($tz));
     }
 
-    function test (): void {
-        var_dump($this->pdo->query('SELECT * FROM "test"')->fetchAll());
-    }
-
     /**
      * @throws Exception
      */
@@ -64,9 +60,9 @@ class Database {
         if (!isset($row['id'])) return null;
         return new DbOnboardingRoute(
                 id: $row['id'],
-                account: $row['account'],
+                accountId: $row['account'],
                 archIds: $row['archIds'],
-                startArch: $row['startArch'],
+                startArchId: $row['startArch'],
         );
     }
 }
