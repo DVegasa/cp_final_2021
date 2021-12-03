@@ -35,7 +35,7 @@ create table if not exists "Event" (
     "title"       text      not null,
     "description" text      not null,
     "timestamp"   timestamp not null,
-    "accountIds"  uuid[]    not null references "Account" ("id")
+    "accountIds"  uuid[]    not null
 );
 
 drop type if exists "lpType";
@@ -45,9 +45,9 @@ create table if not exists "LP" (
     "id"               uuid     not null primary key,
     "title"            text     not null,
     "description"      text     not null,
-    "linkedAccountIds" uuid[]   not null references "Account" ("id"),
-    "testIds"          uuid[]   not null references "Test" ("id"),
-    "eventIds"         uuid[]   not null references "Event" ("id"),
+    "linkedAccountIds" uuid[]   not null,
+    "testIds"          uuid[]   not null,
+    "eventIds"         uuid[]   not null,
     "type"             "lpType" not null,
     "price"            integer  not null,
     "x"                integer,
@@ -58,18 +58,18 @@ create table if not exists "Arch" (
     "id"          uuid   not null primary key,
     "title"       text   not null,
     "description" text   not null,
-    "lpIds"       uuid[] not null references "LP" ("id")
+    "lpIds"       uuid[] not null
 );
 
 create table if not exists "ArchNode" (
     "id"         uuid   not null primary key,
     "archId"     uuid   not null references "Arch" ("id"),
-    "nextArchId" uuid[] not null references "Arch" ("id")
+    "nextArchId" uuid[] not null
 );
 
 create table if not exists "OnboardingRoute" (
     "id"          uuid   not null primary key,
     "accountId"   uuid   not null references "Account" ("id"),
-    "archIds"     uuid[] not null references "Arch" ("id"),
+    "archIds"     uuid[] not null,
     "startArchId" uuid   not null references "Arch" ("id")
-)
+);

@@ -26,8 +26,8 @@ class Database {
      * @throws Exception
      */
     function initMigration (): void {
-        $sql = file_get_contents('./init.sql');
-        if ($sql !== false) throw new Exception();
-        $this->pdo->query($sql)->execute();
+        $sql = file_get_contents(__DIR__ . '\init.sql');
+        if ($sql === false) throw new Exception('Failed to read init.sql file');
+        $this->pdo->exec($sql);
     }
 }

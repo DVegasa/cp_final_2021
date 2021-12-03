@@ -63,7 +63,7 @@ class RestServer {
                 $this->db->initMigration();
                 return $this->response($response, array('result' => 'OK'));
             } catch (Exception $e) {
-                return $this->response($response, array('error' => 'Failed to read init.sql file'));
+                return $this->response($response, array('error' => $e->getMessage()));
             }
         } else {
             return $this->response($response, array('error' => 'Please confirm your action with post data confirmation = yes (inside json)'));
