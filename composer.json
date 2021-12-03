@@ -3,7 +3,8 @@
         "vlucas/phpdotenv": "^5.4",
         "slim/slim": "4.*",
         "slim/psr7": "^1.5",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "tuupola/slim-jwt-auth": "^3.5"
     },
     "autoload": {
         "classmap": [

@@ -9,11 +9,13 @@ use Slim\Factory\AppFactory;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Slim\Routing\RouteCollectorProxy;
+use Tuupola\Middleware\JwtAuthentication;
 
 class RestServer {
     function __construct (public Database $db) {
         $app = AppFactory::create();
         $this->setupRouting($app);
+        $this->setupAuth($app);
         $app->addErrorMiddleware(true, false, true);
         $app->run();
     }
@@ -21,9 +23,21 @@ class RestServer {
     protected function setupRouting (App $app): void {
         $app->group('/api', function(RouteCollectorProxy $api) {
             $api->get('/ping', array($this, 'ping'));
+            $api->get('/pingAuth', array($this, 'pingAuth'));
             $api->any('/echoBack', array($this, 'echoBack'));
             $api->post('/dbinit', array($this, 'dbinit'));
+            $api->post('/auth', array($this, 'auth'));
         });
+    }
+
+    protected function setupAuth (App $app): void {
+        $app->addMiddleware(new JwtAuthentication(array(
+                'secret' => $_ENV['WEB_JWT_SECRET'],
+                'ignore' => array('/api/auth', '/api/ping'),
+                'algorithm' => array('HS256'),
+                'secure' => false,
+                'attribute' => 'jwt',
+        )));
     }
 
     protected function response (Response $r, $body=null): Response {
@@ -50,6 +64,12 @@ class RestServer {
         ));
     }
 
+    function pingAuth (Request $request, Response $response): Response {
+        return $this->response($response, array(
+                'status' => 'Auth OK',
+        ));
+    }
+
     function echoBack (Request $request, Response $response): Response {
         return $this->response($response, array(
                 'get' => $this->getGetParams($request),
@@ -68,6 +88,11 @@ class RestServer {
         } else {
             return $this->response($response, array('error' => 'Please confirm your action with post data confirmation = yes (inside json)'));
         }
+    }
+
+
+    function auth (Request $request, Response $response): Response {
+
     }
 }
 
