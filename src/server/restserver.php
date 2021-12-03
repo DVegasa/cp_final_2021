@@ -8,7 +8,10 @@ use Cake\Chronos\ChronosInterval;
 use DateTimeImmutable;
 use dvegasa\cpfinal\server\outmodels\OutAccount;
 use dvegasa\cpfinal\server\outmodels\OutArch;
+use dvegasa\cpfinal\server\outmodels\OutLP;
 use dvegasa\cpfinal\server\outmodels\OutOnboardingRoute;
+use dvegasa\cpfinal\server\outmodels\OutQuestionAnswerInput;
+use dvegasa\cpfinal\server\outmodels\OutTest;
 use dvegasa\cpfinal\storage\database\Database;
 use dvegasa\cpfinal\storage\dbmodels\DbArch;
 use Exception;
@@ -127,6 +130,44 @@ class RestServer {
         $outArchs = array();
         foreach ($dbOnboardRoute->archIds as $archId) {
             $dbArch = $this->db->getArchById($archId);
+            $outLps = array();
+            foreach ($dbArch->lps as $lpId) {
+                $dbLp = $this->db->getLPById($lpId);
+                $outTests = array();
+                foreach ($dbLp->testIds as $testId) {
+                    $dbTest = $this->db->getTestById($testId);
+                    $outQuestions = array();
+                    foreach ($dbTest->questionIds as $questionId) {
+                        $dbQuestion = $questionId;
+                        $outQuestions[] = new OutQuestionAnswerInput();
+                    }
+                    $outTests[] = new OutTest(
+                            id: $dbTest->id,
+                            title: $dbTest->title,
+                            questions: $outQuestions,
+                    );
+                }
+
+                $outLps[] = new OutLP(
+                        id: $dbLp->id,
+                        title: $dbLp->title,
+                        description: $dbLp->description,
+                        linkedAccounts: array(),
+                        tests: $outTests,
+                        events: array(),
+                        type: $dbLp->type,
+                        price: $dbLp->price,
+                        x: $dbLp->x,
+                        y: $dbLp->y,
+                );
+            }
+
+            $outArchs[] = new OutArch(
+                    id: $dbArch->id,
+                    title: $dbArch->title,
+                    description: $dbArch->description,
+                    lps: $outLps
+            );
         }
 
         $res = new OutOnboardingRoute(

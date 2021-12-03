@@ -4,7 +4,9 @@ namespace dvegasa\cpfinal\storage\database;
 
 use dvegasa\cpfinal\storage\dbmodels\DbAccount;
 use dvegasa\cpfinal\storage\dbmodels\DbArch;
+use dvegasa\cpfinal\storage\dbmodels\DbLP;
 use dvegasa\cpfinal\storage\dbmodels\DbOnboardingRoute;
+use dvegasa\cpfinal\storage\dbmodels\DbTest;
 use Exception;
 use PDO;
 
@@ -80,6 +82,37 @@ class Database {
                 title: $row['title'],
                 description: $row['description'],
                 lps: $row['lps'],
+        );
+    }
+
+    function getLPById (string $id): DbLP|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "LP" WHERE "id" = ?');
+        $stmt->execute(array($id));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbLP(
+                id: $row['id'] ?? null,
+                title: $row['title'] ?? null,
+                description: $row['description'] ?? null,
+                linkedAccountIds: $row['linkedAccountIds'] ?? null,
+                testIds: $row['testIds'] ?? null,
+                eventIds: $row['eventIds'] ?? null,
+                type: $row['type'] ?? null,
+                price: $row['price'] ?? null,
+                x: $row['x'] ?? null,
+                y: $row['y'] ?? null,
+        );
+    }
+
+    function getTestById (string $id): DbTest|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "Test" WHERE "id" = ?');
+        $stmt->execute(array($id));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbTest(
+                id: $row['id'] ?? null,
+                title: $row['title'] ?? null,
+                questionIds: $row['questionIds'] ?? null,
         );
     }
 
