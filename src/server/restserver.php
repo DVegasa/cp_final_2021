@@ -2,8 +2,15 @@
 
 namespace dvegasa\cpfinal\server\restserver;
 
-use dvegasa\cpfinal\database\Database;
+use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosInterface;
+use Cake\Chronos\ChronosInterval;
+use DateTimeImmutable;
+use dvegasa\cpfinal\storage\database\Database;
 use Exception;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Request;
@@ -40,13 +47,15 @@ class RestServer {
         )));
     }
 
-    protected function response (Response $r, $body=null): Response {
+    protected function response (Response $r, $body=null, $code=200): Response {
         if ($body !== null) {
             $r->getBody()->write(json_encode($body));
         } else {
             $r->getBody()->write('');
         }
-        return $r->withHeader('Content-Type', 'application/json');
+        $r = $r->withHeader('Content-Type', 'application/json');
+        $r = $r->withStatus($code);
+        return $r;
     }
 
     protected function getPostParams(Request $req): ?array {
@@ -92,7 +101,37 @@ class RestServer {
 
 
     function auth (Request $request, Response $response): Response {
+        $params = $this->getPostParams($request);
+        if (!isset($params['email']) || !isset($params['pass'])) {
+            return $this->response($response, array('You must specify [email] and [pass] fields'), code: 400);
+        }
+        $dbAccount = $this->db->getAccountByEmail($params['email']);
+        if ($dbAccount === null) return $this->response($response, array('This email is not registered'), code: 400);
 
+        $jwt = $this->issueJwt(Chronos::now()->addDay(), $dbAccount->id, $dbAccount->email);
+        return $this->response($response, array('jwt' => $jwt));
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function issueJwt(
+            ChronosInterface $expAt,
+            string $accountId,
+            string $email,
+    ): string {
+        $now = Chronos::now();
+        $jwtCfg = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($_ENV['WEB_JWT_SECRET']));
+        $jwt = $jwtCfg->builder()
+                ->issuedBy('dvegasa/cpfinal2021')
+                ->permittedFor('dvegasa/cpfinal2021')
+                ->relatedTo($accountId)
+                ->withClaim('accEmail', $email)
+                ->withClaim('accId', $accountId)
+                ->issuedAt($now->sub(new ChronosInterval(years: 0, seconds: 2)))
+                ->expiresAt(new DateTimeImmutable($expAt->toIso8601String()))
+                ->getToken($jwtCfg->signer(), $jwtCfg->signingKey());
+        return $jwt->toString();
     }
 }
 

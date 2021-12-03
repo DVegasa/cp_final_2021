@@ -2,8 +2,8 @@
 namespace dvegasa\cpfinal\main;
 
 use Dotenv\Dotenv;
-use dvegasa\cpfinal\database\Database;
 use dvegasa\cpfinal\server\restserver\RestServer;
+use dvegasa\cpfinal\storage\database\Database;
 
 function main (array $args): void {
     loadEnvVars();
