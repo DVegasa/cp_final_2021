@@ -3,6 +3,7 @@
 namespace dvegasa\cpfinal\storage\database;
 
 use dvegasa\cpfinal\storage\dbmodels\DbAccount;
+use dvegasa\cpfinal\storage\dbmodels\DbOnboardingRoute;
 use Exception;
 use PDO;
 
@@ -56,7 +57,16 @@ class Database {
         );
     }
 
-    function getOnboardingRouteByAccountId (string $accountId): void {
-
+    function getOnboardingRouteByAccountId (string $accountId): DbOnboardingRoute|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "OnboardingRoute" WHERE "id" = ?');
+        $stmt->execute(array($accountId));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbOnboardingRoute(
+                id: $row['id'],
+                account: $row['account'],
+                archIds: $row['archIds'],
+                startArch: $row['startArch'],
+        );
     }
 }

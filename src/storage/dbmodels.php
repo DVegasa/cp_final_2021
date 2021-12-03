@@ -42,7 +42,7 @@ class DbTest {
     function __construct (
             public string $id,
             public string $title,
-            public array $questions, // DbQuestion[]
+            public array $questionIds, // DbQuestion[]
     ) {}
 }
 
@@ -52,7 +52,7 @@ class DbEvent {
             public string $title,
             public string $description,
             public ChronosInterface $timestamp,
-            public array $accounts, // DbAccount[]
+            public array $accountIds, // DbAccount[]
     ) {}
 }
 
@@ -66,9 +66,9 @@ class DbLP {
             public string $id,
             public string $title,
             public string $description,
-            public array $linkedAccounts, // DbAccount[]
-            public array $tests, // DbTest[]
-            public array $events, // DbEvent[]
+            public array $linkedAccountIds, // DbAccount[]
+            public array $testIds, // DbTest[]
+            public array $eventIds, // DbEvent[]
             public string $type, // enum LPType
             public int $price,
             public ?int $x,
@@ -88,16 +88,16 @@ class DbArch {
 class DbArchNode {
     function __construct (
             public string $id,
-            public DbArch $arch,
-            public array $nextArch, // DbArch[]
+            public string $archId,
+            public array $nextArchIds, // DbArch[]
     ) {}
 }
 
 class DbOnboardingRoute {
     function __construct (
             public string $id,
-            public DbAccount $account,
+            public string $accountId,
             public array $archIds, // DbArch[]
-            public DbArch $startArch,
+            public string $startArchId,
     ) {}
 }

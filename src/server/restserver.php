@@ -35,7 +35,7 @@ class RestServer {
             $api->any('/echoBack', array($this, 'echoBack'));
             $api->post('/dbinit', array($this, 'dbinit'));
             $api->post('/auth', array($this, 'auth'));
-            $api->post('/onboardingRoute/get', array($this, 'onboardingRoute_get'));
+            $api->get('/onboardingRoute/get', array($this, 'onboardingRoute_get'));
         });
     }
 
@@ -115,7 +115,9 @@ class RestServer {
     }
 
     function onboardingRoute_get (Request $request, Response $response): Response {
-        return $this->response($response, array('error' => 'Not Implemented Yet'), 501);
+        $accountId = $request->getAttribute('jwt')['accId'];
+        $dbOnboardRoute = $this->db->getOnboardingRouteByAccountId($accountId);
+        return $this->response($response, array());
     }
 
     /**
