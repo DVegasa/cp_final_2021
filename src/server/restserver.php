@@ -32,6 +32,7 @@ class RestServer {
         $app = AppFactory::create();
         $this->setupRouting($app);
         $this->setupAuth($app);
+        $this->setupCors($app);
         $app->addErrorMiddleware(true, false, true);
         $app->run();
     }
@@ -45,6 +46,9 @@ class RestServer {
             $api->post('/auth', array($this, 'auth'));
             $api->get('/onboardingRoute/get', array($this, 'onboardingRoute_get'));
         });
+        $app->options('/{routes:.+}', function ($request, $response, $args) {
+            return $response;
+        });
     }
 
     protected function setupAuth (App $app): void {
@@ -55,6 +59,17 @@ class RestServer {
                 'secure' => false,
                 'attribute' => 'jwt',
         )));
+    }
+
+    protected function setupCors (App $app): void {
+        $app->add(function ($request, $handler) {
+            $response = $handler->handle($request);
+            $allowedOrigin = '*';
+            return $response
+                    ->withHeader('Access-Control-Allow-Origin', '*')
+                    ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+        });
     }
 
     protected function response (Response $r, $body=null, $code=200): Response {
