@@ -128,19 +128,13 @@ class RestServer {
         $dbOnboardRouteAccountId = $this->db->getAccountById($dbOnboardRoute->accountId);
         $dbOnboardRouteStartArch = $this->db->getArchById($dbOnboardRoute->startArchId);
         $outArchs = array();
-        var_dump('yy');
-        var_dump($dbOnboardRoute);
         foreach ($dbOnboardRoute->archIds as $archId) {
-            var_dump('xx');
-            var_dump($archId);
             $dbArch = $this->db->getArchById($archId);
             $outLps = array();
             foreach ($dbArch->lps as $lpId) {
                 if ($lpId === '') continue;
                 $dbLp = $this->db->getLPById($lpId);
                 $outTests = array();
-                var_dump('xxx');
-                var_dump($dbLp->testIds);
                 foreach ($dbLp->testIds as $testId) {
                     if ($testId === '') continue;
                     $dbTest = $this->db->getTestById($testId);

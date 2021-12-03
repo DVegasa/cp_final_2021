@@ -147,7 +147,6 @@ class Database {
     }
 
     function getOnboardingRouteByAccountId (string $accountId): DbOnboardingRoute|null {
-        var_dump($accountId);
         $stmt = $this->pdo->prepare('SELECT * FROM "OnboardingRoute" WHERE "accountId" = ?');
         $stmt->execute(array($accountId));
         $row = $stmt->fetch();
