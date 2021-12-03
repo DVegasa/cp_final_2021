@@ -58,7 +58,7 @@ class Database {
         );
     }
 
-    function getAccountByIdl (string $id): DbAccount|null {
+    function getAccountById (string $id): DbAccount|null {
         $stmt = $this->pdo->prepare('SELECT * FROM "Account" WHERE "id" = ?');
         $stmt->execute(array($id));
         $row = $stmt->fetch();
@@ -83,7 +83,7 @@ class Database {
                 id: $row['id'],
                 title: $row['title'],
                 description: $row['description'],
-                lps: $row['lps'],
+                lps: $this->ga($row['lpIds'], ','),
         );
     }
 
@@ -96,9 +96,9 @@ class Database {
                 id: $row['id'] ?? null,
                 title: $row['title'] ?? null,
                 description: $row['description'] ?? null,
-                linkedAccountIds: $row['linkedAccountIds'] ?? null,
-                testIds: $row['testIds'] ?? null,
-                eventIds: $row['eventIds'] ?? null,
+                linkedAccountIds: $this->ga($row['linkedAccountIds'] ?? null),
+                testIds: $this->ga($row['testIds'] ?? null),
+                eventIds: $this->ga($row['eventIds'] ?? null),
                 type: $row['type'] ?? null,
                 price: $row['price'] ?? null,
                 x: $row['x'] ?? null,
@@ -114,7 +114,7 @@ class Database {
         return new DbTest(
                 id: $row['id'] ?? null,
                 title: $row['title'] ?? null,
-                questionIds: $row['questionIds'] ?? null,
+                questionIds: $this->ga($row['questionIds'] ?? null) ?? null,
         );
     }
 
@@ -147,15 +147,21 @@ class Database {
     }
 
     function getOnboardingRouteByAccountId (string $accountId): DbOnboardingRoute|null {
-        $stmt = $this->pdo->prepare('SELECT * FROM "OnboardingRoute" WHERE "id" = ?');
+        var_dump($accountId);
+        $stmt = $this->pdo->prepare('SELECT * FROM "OnboardingRoute" WHERE "accountId" = ?');
         $stmt->execute(array($accountId));
         $row = $stmt->fetch();
         if (!isset($row['id'])) return null;
         return new DbOnboardingRoute(
                 id: $row['id'],
-                accountId: $row['account'],
-                archIds: $row['archIds'],
-                startArchId: $row['startArch'],
+                accountId: $row['accountId'],
+                archIds: $this->ga($row['archIds']),
+                startArchId: $row['startArchId'],
         );
+    }
+
+    protected function ga (?string $postgresqlArray): array|null {
+        if ($postgresqlArray === null) return null;
+        return explode(',', substr($postgresqlArray, 1, -1));
     }
 }

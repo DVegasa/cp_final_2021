@@ -125,11 +125,14 @@ class RestServer {
     function onboardingRoute_get (Request $request, Response $response): Response {
         $accountId = $request->getAttribute('jwt')['accId'];
         $dbOnboardRoute = $this->db->getOnboardingRouteByAccountId($accountId);
-        $dbOnboardRouteAccountId = $this->db->getAccountByEmail($dbOnboardRoute->accountId);
+        $dbOnboardRouteAccountId = $this->db->getAccountById($dbOnboardRoute->accountId);
         $dbOnboardRouteStartArch = $this->db->getArchById($dbOnboardRoute->startArchId);
-        $dbOnboardRouteArchs = array();
         $outArchs = array();
+        var_dump('yy');
+        var_dump($dbOnboardRoute);
         foreach ($dbOnboardRoute->archIds as $archId) {
+            var_dump('xx');
+            var_dump($archId);
             $dbArch = $this->db->getArchById($archId);
             $outLps = array();
             foreach ($dbArch->lps as $lpId) {
