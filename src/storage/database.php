@@ -127,7 +127,7 @@ class Database {
                 id: $row['id'] ?? null,
                 title: $row['title'] ?? null,
                 description: $row['description'] ?? null,
-                answers: $row['answers'] ?? null,
+                answers: $this->ga($row['answers'] ?? null),
                 reward: $row['reward'] ?? null,
         );
     }
@@ -140,8 +140,8 @@ class Database {
         return new DbQuestionMultiChoice(
                 id: $row['id'] ?? null,
                 title: $row['title'] ?? null,
-                variants: $row['variants'] ?? null,
-                corrects: $row['corrects'] ?? null,
+                variants: $this->ga($row['variants'] ?? null),
+                corrects: $this->ga($row['corrects'] ?? null),
                 reward: $row['reward'] ?? null,
         );
     }

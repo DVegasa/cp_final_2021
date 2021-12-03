@@ -136,9 +136,13 @@ class RestServer {
             $dbArch = $this->db->getArchById($archId);
             $outLps = array();
             foreach ($dbArch->lps as $lpId) {
+                if ($lpId === '') continue;
                 $dbLp = $this->db->getLPById($lpId);
                 $outTests = array();
+                var_dump('xxx');
+                var_dump($dbLp->testIds);
                 foreach ($dbLp->testIds as $testId) {
+                    if ($testId === '') continue;
                     $dbTest = $this->db->getTestById($testId);
                     $outQuestions = array();
                     foreach ($dbTest->questionIds as $questionId) {
