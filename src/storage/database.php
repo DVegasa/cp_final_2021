@@ -55,4 +55,8 @@ class Database {
                 score: $row['score'],
         );
     }
+
+    function getOnboardingRouteByAccountId (string $accountId): void {
+
+    }
 }

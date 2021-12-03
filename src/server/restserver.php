@@ -8,6 +8,7 @@ use Cake\Chronos\ChronosInterval;
 use DateTimeImmutable;
 use dvegasa\cpfinal\storage\database\Database;
 use Exception;
+use JsonSchema\Exception\ResourceNotFoundException;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -34,6 +35,7 @@ class RestServer {
             $api->any('/echoBack', array($this, 'echoBack'));
             $api->post('/dbinit', array($this, 'dbinit'));
             $api->post('/auth', array($this, 'auth'));
+            $api->post('/onboardingRoute/get', array($this, 'onboardingRoute_get'));
         });
     }
 
@@ -110,6 +112,10 @@ class RestServer {
 
         $jwt = $this->issueJwt(Chronos::now()->addDay(), $dbAccount->id, $dbAccount->email);
         return $this->response($response, array('jwt' => $jwt));
+    }
+
+    function onboardingRoute_get (Request $request, Response $response): Response {
+        return $this->response($response, array('error' => 'Not Implemented Yet'), 501);
     }
 
     /**
