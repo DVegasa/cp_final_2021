@@ -97,7 +97,7 @@ class OutOnboardingRoute {
     function __construct (
             public string $id,
             public OutAccount $account,
-            public array $archIds, // OutArch[]
+            public array $archs, // OutArch[]
             public OutArch $startArch,
     ) {}
 }

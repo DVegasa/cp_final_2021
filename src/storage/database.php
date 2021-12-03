@@ -3,6 +3,7 @@
 namespace dvegasa\cpfinal\storage\database;
 
 use dvegasa\cpfinal\storage\dbmodels\DbAccount;
+use dvegasa\cpfinal\storage\dbmodels\DbArch;
 use dvegasa\cpfinal\storage\dbmodels\DbOnboardingRoute;
 use Exception;
 use PDO;
@@ -50,6 +51,35 @@ class Database {
                 lastName: $row['lastName'],
                 position: $row['position'],
                 score: $row['score'],
+        );
+    }
+
+    function getAccountByIdl (string $id): DbAccount|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "Account" WHERE "id" = ?');
+        $stmt->execute(array($id));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbAccount(
+                id: $row['id'],
+                email: $row['email'],
+                pass: $row['pass'],
+                firstName: $row['firstName'],
+                lastName: $row['lastName'],
+                position: $row['position'],
+                score: $row['score'],
+        );
+    }
+
+    function getArchById (string $id): DbArch|null {
+        $stmt = $this->pdo->prepare('SELECT * FROM "Arch" WHERE "id" = ?');
+        $stmt->execute(array($id));
+        $row = $stmt->fetch();
+        if (!isset($row['id'])) return null;
+        return new DbArch(
+                id: $row['id'],
+                title: $row['title'],
+                description: $row['description'],
+                lps: $row['lps'],
         );
     }
 

@@ -6,7 +6,11 @@ use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosInterface;
 use Cake\Chronos\ChronosInterval;
 use DateTimeImmutable;
+use dvegasa\cpfinal\server\outmodels\OutAccount;
+use dvegasa\cpfinal\server\outmodels\OutArch;
+use dvegasa\cpfinal\server\outmodels\OutOnboardingRoute;
 use dvegasa\cpfinal\storage\database\Database;
+use dvegasa\cpfinal\storage\dbmodels\DbArch;
 use Exception;
 use JsonSchema\Exception\ResourceNotFoundException;
 use Lcobucci\JWT\Configuration;
@@ -117,7 +121,34 @@ class RestServer {
     function onboardingRoute_get (Request $request, Response $response): Response {
         $accountId = $request->getAttribute('jwt')['accId'];
         $dbOnboardRoute = $this->db->getOnboardingRouteByAccountId($accountId);
-        return $this->response($response, array());
+        $dbOnboardRouteAccountId = $this->db->getAccountByEmail($dbOnboardRoute->accountId);
+        $dbOnboardRouteStartArch = $this->db->getArchById($dbOnboardRoute->startArchId);
+        $dbOnboardRouteArchs = array();
+        $outArchs = array();
+        foreach ($dbOnboardRoute->archIds as $archId) {
+            $dbArch = $this->db->getArchById($archId);
+        }
+
+        $res = new OutOnboardingRoute(
+                id: $dbOnboardRoute->id,
+                account: new OutAccount(
+                        id: $dbOnboardRouteAccountId->id,
+                        email: $dbOnboardRouteAccountId->email,
+                        pass: $dbOnboardRouteAccountId->pass,
+                        firstName: $dbOnboardRouteAccountId->firstName,
+                        lastName: $dbOnboardRouteAccountId->lastName,
+                        position: $dbOnboardRouteAccountId->position,
+                        score: $dbOnboardRouteAccountId->score,
+                ),
+                startArch: new OutArch(
+                        id: $dbOnboardRouteStartArch->id,
+                        title: $dbOnboardRouteStartArch->title,
+                        description: $dbOnboardRouteStartArch->description,
+                        lps: $dbOnboardRouteStartArch->lps,
+                ),
+                archs: $outArchs,
+        );
+        return $this->response($response, array($res));
     }
 
     /**
