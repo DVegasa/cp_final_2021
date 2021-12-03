@@ -2,6 +2,7 @@
 
 namespace dvegasa\cpfinal\database;
 
+use Exception;
 use PDO;
 
 class Database {
@@ -19,5 +20,14 @@ class Database {
 
     function test (): void {
         var_dump($this->pdo->query('SELECT * FROM "test"')->fetchAll());
+    }
+
+    /**
+     * @throws Exception
+     */
+    function initMigration (): void {
+        $sql = file_get_contents('./init.sql');
+        if ($sql !== false) throw new Exception();
+        $this->pdo->query($sql)->execute();
     }
 }

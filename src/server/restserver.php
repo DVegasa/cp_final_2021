@@ -3,6 +3,7 @@
 namespace dvegasa\cpfinal\server\restserver;
 
 use dvegasa\cpfinal\database\Database;
+use Exception;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Request;
@@ -21,6 +22,7 @@ class RestServer {
         $app->group('/api', function(RouteCollectorProxy $api) {
             $api->get('/ping', array($this, 'ping'));
             $api->any('/echoBack', array($this, 'echoBack'));
+            $api->post('/dbinit', array($this, 'dbinit'));
         });
     }
 
@@ -53,6 +55,19 @@ class RestServer {
                 'get' => $this->getGetParams($request),
                 'post' => $this->getPostParams($request),
         ));
+    }
+
+    function dbinit (Request $request, Response $response): Response {
+        if ($this->getPostParams($request)['confirmation'] === 'yes') {
+            try {
+                $this->db->initMigration();
+                return $this->response($response, array('result' => 'OK'));
+            } catch (Exception $e) {
+                return $this->response($response, array('error' => 'Failed to read init.sql file'));
+            }
+        } else {
+            return $this->response($response, array('error' => 'Please confirm your action with post data confirmation = yes (inside json)'));
+        }
     }
 }
 

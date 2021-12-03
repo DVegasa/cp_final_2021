@@ -2,7 +2,8 @@
     "require": {
         "vlucas/phpdotenv": "^5.4",
         "slim/slim": "4.*",
-        "slim/psr7": "^1.5"
+        "slim/psr7": "^1.5",
+        "ext-pdo": "*"
     },
     "autoload": {
         "classmap": [
