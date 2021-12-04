@@ -50,6 +50,7 @@ create table if not exists "LP" (
     "eventIds"         uuid[]   not null,
     "type"             "lpType" not null,
     "price"            integer  not null,
+    "linked"           uuid[]   not null,
     "x"                integer,
     "y"                integer
 );

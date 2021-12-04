@@ -71,6 +71,7 @@ class DbLP {
             public array $eventIds, // DbEvent[]
             public string $type, // enum LPType
             public int $price,
+            public array $linked, // DbLP[]
             public ?int $x,
             public ?int $y,
     ) {}

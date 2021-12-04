@@ -71,6 +71,7 @@ class OutLP {
             public array $events, // OutEvent[]
             public string $type, // enum OutLPType
             public int $price,
+            public array $linked, // string[] of LP (id)
             public ?int $x,
             public ?int $y,
     ) {}

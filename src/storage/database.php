@@ -101,6 +101,7 @@ class Database {
                 eventIds: $this->ga($row['eventIds'] ?? null),
                 type: $row['type'] ?? null,
                 price: $row['price'] ?? null,
+                linked: $this->ga($row['linked'] ?? null),
                 x: $row['x'] ?? null,
                 y: $row['y'] ?? null,
         );

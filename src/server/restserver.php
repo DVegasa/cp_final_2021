@@ -191,6 +191,7 @@ class RestServer {
                         events: array(),
                         type: $dbLp->type,
                         price: $dbLp->price,
+                        linked: $dbLp->linked,
                         x: $dbLp->x,
                         y: $dbLp->y,
                 );
